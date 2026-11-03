@@ -39,7 +39,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="NotificationsMessaging\Infraestructure\" />
       <Folder Include="NotificationsMessaging\Resources\" />
     </ItemGroup>
 
