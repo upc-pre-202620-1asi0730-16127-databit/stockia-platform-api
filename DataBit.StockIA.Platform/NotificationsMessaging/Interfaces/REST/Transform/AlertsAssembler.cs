@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataBit.StockIA.Platform.NotificationsMessaging.Application.Errors;
+using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Model.Aggregates;
 using DataBit.StockIA.Platform.NotificationsMessaging.Interfaces.REST.Resources;
 using DataBit.StockIA.Platform.Shared.Application.Patterns;
 using DataBit.StockIA.Platform.Shared.Domain.Model.ValueObjects;
 using DataBit.StockIA.Platform.Shared.Interfaces.REST;
+using DataBit.StockIA.Platform.Shared.Interfaces.REST.ProblemDetails;
 
 namespace DataBit.StockIA.Platform.NotificationsMessaging.Interfaces.REST.Transform;
 
