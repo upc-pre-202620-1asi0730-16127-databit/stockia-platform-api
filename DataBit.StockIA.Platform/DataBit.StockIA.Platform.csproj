@@ -40,7 +40,6 @@
 
     <ItemGroup>
       <Folder Include="NotificationsMessaging\Application\" />
-      <Folder Include="NotificationsMessaging\Domain\Model\Commands\" />
       <Folder Include="NotificationsMessaging\Domain\Model\Queries\" />
       <Folder Include="NotificationsMessaging\Domain\Repositories\" />
       <Folder Include="NotificationsMessaging\Domain\Services\" />
