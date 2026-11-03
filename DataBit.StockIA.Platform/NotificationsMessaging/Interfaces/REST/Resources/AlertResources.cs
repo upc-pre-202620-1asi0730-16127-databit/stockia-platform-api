@@ -2,7 +2,7 @@
 
 namespace DataBit.StockIA.Platform.NotificationsMessaging.Interfaces.REST.Resources;
 
-public record AlertResources(int Id, string Type, string Severity, string Message, DateTimeOffset CreatedAt, 
+public record AlertResource(int Id, string Type, string Severity, string Message, DateTimeOffset CreatedAt, 
     bool Acknowledged, string Channel, IReadOnlyList<string> DeliveredChannels, IReadOnlyList<string> RequiredChannels, 
     bool Delivered, int? InventoryItemId);
 
