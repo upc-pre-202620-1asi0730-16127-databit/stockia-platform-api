@@ -41,8 +41,9 @@
     <ItemGroup>
       <Folder Include="NotificationsMessaging\Application\" />
       <Folder Include="NotificationsMessaging\Infraestructure\" />
-      <Folder Include="NotificationsMessaging\Interfaces\" />
-      <Folder Include="NotificationsMessaging\Repositories\" />
+      <Folder Include="NotificationsMessaging\Interfaces\REST\Resources\" />
+      <Folder Include="NotificationsMessaging\Interfaces\REST\Transform\" />
+      <Folder Include="NotificationsMessaging\Resources\" />
     </ItemGroup>
 
 </Project>
