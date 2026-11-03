@@ -1,4 +1,5 @@
-﻿using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Model.Commands;
+﻿using DataBit.StockIA.Platform.NotificationsMessaging.Application.Services;
+using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Model.Commands;
 using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Repositories;
 using DataBit.StockIA.Platform.NotificationsMessaging.Interfaces.ACL;
 
