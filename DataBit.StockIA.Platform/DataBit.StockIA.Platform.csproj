@@ -39,7 +39,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="NotificationsMessaging\Application\Internal\" />
+      <Folder Include="NotificationsMessaging\Application\Internal\CommandServices\" />
+      <Folder Include="NotificationsMessaging\Application\Internal\EventHandlers\" />
+      <Folder Include="NotificationsMessaging\Application\Internal\QueryServices\" />
       <Folder Include="NotificationsMessaging\Infraestructure\" />
       <Folder Include="NotificationsMessaging\Resources\" />
     </ItemGroup>
