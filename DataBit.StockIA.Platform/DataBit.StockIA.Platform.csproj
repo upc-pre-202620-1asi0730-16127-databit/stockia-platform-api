@@ -38,4 +38,16 @@
         <InternalsVisibleTo Include="DataBit.StockIA.Platform.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="NotificationsMessaging\Application\" />
+      <Folder Include="NotificationsMessaging\Domain\Model\Aggregates\" />
+      <Folder Include="NotificationsMessaging\Domain\Model\Commands\" />
+      <Folder Include="NotificationsMessaging\Domain\Model\Queries\" />
+      <Folder Include="NotificationsMessaging\Domain\Repositories\" />
+      <Folder Include="NotificationsMessaging\Domain\Services\" />
+      <Folder Include="NotificationsMessaging\Infraestructure\" />
+      <Folder Include="NotificationsMessaging\Interfaces\" />
+      <Folder Include="NotificationsMessaging\Repositories\" />
+    </ItemGroup>
+
 </Project>
