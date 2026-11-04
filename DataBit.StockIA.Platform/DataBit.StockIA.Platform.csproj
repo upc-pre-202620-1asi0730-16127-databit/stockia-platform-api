@@ -38,4 +38,12 @@
         <InternalsVisibleTo Include="DataBit.StockIA.Platform.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="AnalyticsDashboard\Application\Internal\QueryServices\" />
+      <Folder Include="AnalyticsDashboard\Application\Services\" />
+      <Folder Include="AnalyticsDashboard\Domain\Model\Queries\" />
+      <Folder Include="AnalyticsDashboard\Interfaces\REST\Resources\" />
+      <Folder Include="AnalyticsDashboard\Interfaces\REST\Transform\" />
+    </ItemGroup>
+
 </Project>
