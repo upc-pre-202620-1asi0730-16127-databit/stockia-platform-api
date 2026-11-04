@@ -5,6 +5,7 @@ using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Model.Aggregates;
 using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Model.Commands;
 using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Repositories;
 using DataBit.StockIA.Platform.NotificationsMessaging.Domain.Services;
+using DataBit.StockIA.Platform.NotificationsMessaging.Resources;
 using DataBit.StockIA.Platform.Shared.Application;
 using DataBit.StockIA.Platform.Shared.Application.Patterns;
 using DataBit.StockIA.Platform.Shared.Domain.Model.ValueObjects;

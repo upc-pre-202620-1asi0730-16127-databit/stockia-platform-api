@@ -39,7 +39,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="NotificationsMessaging\Resources\" />
+      <EmbeddedResource Update="NotificationsMessaging\Resources\NotificationsMessagingMessages.es.resx">
+        <DependentUpon>NotificationsMessagingMessages.cs</DependentUpon>
+      </EmbeddedResource>
     </ItemGroup>
 
 </Project>
