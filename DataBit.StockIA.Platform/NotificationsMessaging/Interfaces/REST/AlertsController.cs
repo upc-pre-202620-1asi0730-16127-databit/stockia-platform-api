@@ -100,4 +100,4 @@ public class AlertsController(IAlertCommandService alertCommandService,
     private BadRequestObjectResult InvalidCodes() =>
         BadRequest(problemDetailsFactory.CreateProblemDetails(StatusCodes.Status400BadRequest, "InvalidAlert",
             "Use type LOW_STOCK, CRITICAL_STOCK, EXPIRING_SOON or IOT_FAULT; severity INFO, WARNING or CRITICAL; channel WHATSAPP or EMAIL."));
-})
+}
