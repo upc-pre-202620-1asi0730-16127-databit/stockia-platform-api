@@ -38,4 +38,10 @@
         <InternalsVisibleTo Include="DataBit.StockIA.Platform.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="NotificationsMessaging\Resources\NotificationsMessagingMessages.es.resx">
+        <DependentUpon>NotificationsMessagingMessages.cs</DependentUpon>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
