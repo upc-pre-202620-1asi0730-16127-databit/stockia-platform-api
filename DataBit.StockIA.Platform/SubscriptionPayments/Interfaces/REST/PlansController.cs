@@ -1,4 +1,4 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.Iam.Infrastructure.Pipeline.Middleware.Attributes;
 using DataBit.StockIA.Platform.SubscriptionPayments.Application.Services;
