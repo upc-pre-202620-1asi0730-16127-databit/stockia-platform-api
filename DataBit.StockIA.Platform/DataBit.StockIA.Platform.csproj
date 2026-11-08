@@ -38,8 +38,4 @@
         <InternalsVisibleTo Include="DataBit.StockIA.Platform.Tests" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="SubscriptionPayments\Domain\Model\" />
-    </ItemGroup>
-
 </Project>
