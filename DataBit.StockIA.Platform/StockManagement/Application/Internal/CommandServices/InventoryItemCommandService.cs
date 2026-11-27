@@ -1,3 +1,6 @@
+using DataBit.StockIA.Platform.Shared.Application.Errors;
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 using Cortex.Mediator;
 using Microsoft.Extensions.Localization;
 using DataBit.StockIA.Platform.Shared.Application;
@@ -24,14 +27,20 @@ namespace DataBit.StockIA.Platform.StockManagement.Application.Internal.CommandS
 public class InventoryItemCommandService(
     IInventoryItemRepository inventoryItemRepository,
     IStockConsumptionRepository stockConsumptionRepository,
+    ISubscriptionContextFacade subscriptionContextFacade,
     IUnitOfWork unitOfWork,
     IRestaurantClock clock,
     IMediator mediator,
     ILogger<InventoryItemCommandService> logger,
     IStringLocalizer<StockManagementMessages> localizer) : IInventoryItemCommandService
 {
+    /// <summary>The plan caps how many supplies a restaurant can register (50 in Essential).</summary>
     public async Task<Result<InventoryItem>> Handle(CreateInventoryItemCommand command, CancellationToken cancellationToken)
     {
+        var registered = await inventoryItemRepository.CountByRestaurantIdAsync(command.RestaurantId, cancellationToken);
+        var check = await subscriptionContextFacade.CheckLimit(command.RestaurantId, PlanLimit.InventoryItems, registered, cancellationToken);
+        if (!check.Allowed) return Result<InventoryItem>.Failure(check.Error!.Value, check.Message, check.Details);
+
         InventoryItem item;
         try
         {
