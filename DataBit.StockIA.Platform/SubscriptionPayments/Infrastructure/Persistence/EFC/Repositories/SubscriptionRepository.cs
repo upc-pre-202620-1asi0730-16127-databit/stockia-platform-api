@@ -10,4 +10,11 @@ public class SubscriptionRepository(AppDbContext context) : BaseRepository<Resta
 {
     public Task<RestaurantSubscription?> FindByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
         Context.Set<RestaurantSubscription>().FirstOrDefaultAsync(subscription => subscription.RestaurantId == restaurantId, cancellationToken);
+
+    public Task<RestaurantSubscription?> FindByStripeCustomerIdAsync(string customerId, CancellationToken cancellationToken = default) =>
+        Context.Set<RestaurantSubscription>().FirstOrDefaultAsync(subscription => subscription.StripeCustomerId == customerId, cancellationToken);
+
+    public Task<RestaurantSubscription?> FindByStripeSubscriptionIdAsync(string stripeSubscriptionId, CancellationToken cancellationToken = default) =>
+        Context.Set<RestaurantSubscription>().FirstOrDefaultAsync(subscription => subscription.StripeSubscriptionId == stripeSubscriptionId,
+            cancellationToken);
 }

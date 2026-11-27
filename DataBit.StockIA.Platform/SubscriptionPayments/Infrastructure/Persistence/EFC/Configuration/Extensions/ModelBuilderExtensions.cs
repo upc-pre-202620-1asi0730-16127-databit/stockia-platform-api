@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DataBit.StockIA.Platform.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
 using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Aggregates;
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Entities;
 using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
 
 namespace DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Persistence.EFC.Configuration.Extensions;
@@ -46,8 +47,31 @@ public static class ModelBuilderExtensions
             entity.Property(subscription => subscription.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(subscription => subscription.PaymentMethod).HasConversion<string>().HasMaxLength(20);
             entity.Property(subscription => subscription.BillingInterval).HasConversion<string>().HasMaxLength(20);
+            entity.Property(subscription => subscription.StripeCustomerId).HasMaxLength(64);
+            entity.Property(subscription => subscription.StripeSubscriptionId).HasMaxLength(64);
+            entity.HasIndex(subscription => subscription.StripeCustomerId);
+            entity.HasIndex(subscription => subscription.StripeSubscriptionId);
             entity.Property(subscription => subscription.RenewalDate).HasDateOnlyConversion();
             entity.HasOne<Plan>().WithMany().HasForeignKey(subscription => subscription.PlanId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.HasKey(transaction => transaction.Id);
+            entity.Property(transaction => transaction.Id).ValueGeneratedOnAdd();
+            entity.Property(transaction => transaction.InvoiceId).IsRequired().HasMaxLength(64);
+            entity.HasIndex(transaction => transaction.InvoiceId).IsUnique();
+            entity.HasIndex(transaction => transaction.RestaurantId);
+            entity.Property(transaction => transaction.Amount).HasPrecision(10, 2);
+            entity.Property(transaction => transaction.Currency).IsRequired().HasMaxLength(3);
+            entity.Property(transaction => transaction.Status).HasConversion<string>().HasMaxLength(20);
+        });
+
+        builder.Entity<ProcessedPaymentEvent>(entity =>
+        {
+            entity.HasKey(processedEvent => processedEvent.EventId);
+            entity.Property(processedEvent => processedEvent.EventId).HasMaxLength(64);
+            entity.Property(processedEvent => processedEvent.Type).IsRequired().HasMaxLength(80);
         });
     }
 }
