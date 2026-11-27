@@ -1,4 +1,6 @@
-﻿using System.Net.Mime;
+using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Pipeline.Filters;
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using System.Net.Mime;
 using DataBit.StockIA.Platform.AnalyticsDashboard.Application.Services;
 using DataBit.StockIA.Platform.AnalyticsDashboard.Domain.Model.Queries;
 using DataBit.StockIA.Platform.AnalyticsDashboard.Interfaces.REST.Resources;
@@ -30,7 +32,8 @@ public class DashboardController(IDashboardQueryService dashboardQueryService, I
     /// </summary>
     [HttpGet("weekly-savings")]
     [RequireRole("ADMIN")]
-    [EndpointSummary("Weekly savings (Administrator)")]
+    [RequireFeature(PlanFeature.SustainabilityReports)]
+    [EndpointSummary("Weekly savings (Administrator, plans with sustainability reports)")]
     [EndpointName("GetWeeklySavings")]
     [ProducesResponseType(typeof(WeeklySavingsResource), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetWeeklySavings(CancellationToken cancellationToken) =>
