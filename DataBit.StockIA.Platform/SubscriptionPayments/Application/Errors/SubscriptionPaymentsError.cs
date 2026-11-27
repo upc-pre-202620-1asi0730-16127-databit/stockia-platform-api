@@ -4,6 +4,8 @@ public enum SubscriptionPaymentsError
 {
     PlanNotFound,
     SubscriptionNotFound,
-    InvalidPaymentMethod,
-    PaymentRejected
+    AlreadyOnPlan,
+    CardNotLinked,
+    PaymentGatewayNotConfigured,
+    PaymentGatewayError
 }

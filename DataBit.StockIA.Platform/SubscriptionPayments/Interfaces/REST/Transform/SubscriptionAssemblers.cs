@@ -30,7 +30,7 @@ public static class SubscriptionResourceFromEntityAssembler
 {
     public static SubscriptionResource ToResourceFromEntity(RestaurantSubscription subscription) => new(
         subscription.Id, subscription.PlanId, subscription.Status.ToCode(), subscription.RenewalDate.ToString("yyyy-MM-dd"),
-        subscription.PaymentMethod.ToCode(), subscription.BillingInterval.ToCode());
+        subscription.PaymentMethod.ToCode(), subscription.BillingInterval.ToCode(), subscription.HasCardOnFile, subscription.CancelAtPeriodEnd);
 }
 
 public static class SubscriptionActionResultAssembler
@@ -40,8 +40,10 @@ public static class SubscriptionActionResultAssembler
         {
             SubscriptionPaymentsError.PlanNotFound => StatusCodes.Status404NotFound,
             SubscriptionPaymentsError.SubscriptionNotFound => StatusCodes.Status404NotFound,
-            SubscriptionPaymentsError.InvalidPaymentMethod => StatusCodes.Status400BadRequest,
-            SubscriptionPaymentsError.PaymentRejected => StatusCodes.Status402PaymentRequired,
+            SubscriptionPaymentsError.AlreadyOnPlan => StatusCodes.Status409Conflict,
+            SubscriptionPaymentsError.CardNotLinked => StatusCodes.Status409Conflict,
+            SubscriptionPaymentsError.PaymentGatewayNotConfigured => StatusCodes.Status503ServiceUnavailable,
+            SubscriptionPaymentsError.PaymentGatewayError => StatusCodes.Status502BadGateway,
             _ => StatusCodes.Status500InternalServerError
         }, onSuccess);
 }
