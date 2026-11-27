@@ -1,3 +1,5 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 using Cortex.Mediator;
 using Microsoft.Extensions.Localization;
 using DataBit.StockIA.Platform.MlRecommendations.Application.Errors;
@@ -32,6 +34,7 @@ public class DemandForecastCommandService(
     IWeatherForecastService weatherForecastService,
     IRecipesManagementContextFacade recipesManagementContextFacade,
     IRestaurantRegistrationContextFacade restaurantRegistrationContextFacade,
+    ISubscriptionContextFacade subscriptionContextFacade,
     IRestaurantClock clock,
     IUnitOfWork unitOfWork,
     IMediator mediator,
@@ -45,6 +48,11 @@ public class DemandForecastCommandService(
     {
         if (command.HorizonDays is < 1 or > DemandFeatureBuilder.MinimumLagDays)
             return Result<DemandForecast>.Failure(MlRecommendationsError.InvalidHorizon, localizer[nameof(MlRecommendationsError.InvalidHorizon)]);
+
+        // The plan caps the forecasts of the month (none in Essential, 30 in Starter).
+        var generatedThisMonth = await repository.CountSinceAsync(command.RestaurantId, clock.StartOfMonth(), cancellationToken);
+        var check = await subscriptionContextFacade.CheckLimit(command.RestaurantId, PlanLimit.ForecastsPerMonth, generatedThisMonth, cancellationToken);
+        if (!check.Allowed) return Result<DemandForecast>.Failure(check.Error!.Value, check.Message, check.Details);
 
         var recipes = await recipesManagementContextFacade.GetActiveRecipes(command.RestaurantId, cancellationToken);
         var dishes = recipes.Select(recipe => recipe.DishName).Distinct().ToList();
