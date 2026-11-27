@@ -82,6 +82,18 @@ public class DatabaseSeeder(
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    /// <summary>
+    ///     The demo restaurant shows the whole product (forecasts, recommendations, 120 days of sales),
+    ///     which the free plan caps, so it starts on the most expensive plan. Real sign-ups start on Essential.
+    /// </summary>
+    private async Task UpgradeDemoToTopPlanAsync(int restaurantId, DateOnly today, CancellationToken cancellationToken)
+    {
+        var topPlan = await context.Set<Plan>().OrderByDescending(plan => plan.MonthlyPrice).FirstAsync(cancellationToken);
+        var subscription = await context.Set<RestaurantSubscription>().FirstAsync(candidate => candidate.RestaurantId == restaurantId, cancellationToken);
+        subscription.Activate(topPlan.Id, PaymentMethod.Stripe, BillingInterval.Monthly, today);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task SeedDemoRestaurantAsync(CancellationToken cancellationToken)
     {
         var today = clock.Today;
@@ -100,6 +112,7 @@ public class DatabaseSeeder(
         restaurant.LinkOwner(admin.Id);
         await context.SaveChangesAsync(cancellationToken);
         await subscriptionContextFacade.CreateDefaultSubscription(restaurant.Id, cancellationToken);
+        await UpgradeDemoToTopPlanAsync(restaurant.Id, today, cancellationToken);
 
         InventoryItem Item(string name, string quantity, string min, StorageType storage, int shelfLife, decimal cost) =>
             new(restaurant.Id, name, "kg", Quantity.Parse(quantity), Quantity.Parse(min), storage, shelfLife, cost, today);
