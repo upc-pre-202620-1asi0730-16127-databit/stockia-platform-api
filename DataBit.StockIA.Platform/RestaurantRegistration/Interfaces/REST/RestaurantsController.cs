@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Pipeline.Filters;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.Iam.Infrastructure.Pipeline.Middleware.Attributes;
@@ -15,6 +16,7 @@ namespace DataBit.StockIA.Platform.RestaurantRegistration.Interfaces.REST;
 ///     it; only the Administrator changes it.
 /// </summary>
 [Authorize]
+[AllowIncompleteSubscription]
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]

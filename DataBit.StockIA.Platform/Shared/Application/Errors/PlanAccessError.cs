@@ -11,5 +11,8 @@ public enum PlanAccessError
     PlanLimitReached,
 
     /// <summary>The plan does not include the capability.</summary>
-    FeatureNotInPlan
+    FeatureNotInPlan,
+
+    /// <summary>The subscription is Incomplete: the card or payment is not confirmed at Stripe yet (HTTP 402).</summary>
+    SubscriptionRequired
 }

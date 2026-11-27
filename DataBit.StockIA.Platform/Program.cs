@@ -81,6 +81,7 @@ using DataBit.StockIA.Platform.SubscriptionPayments.Application.Internal.QuerySe
 using DataBit.StockIA.Platform.SubscriptionPayments.Application.Services;
 using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Repositories;
 using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Payments;
+using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Pipeline.Filters;
 using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Persistence.EFC.Repositories;
 using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 
@@ -92,7 +93,12 @@ if (Environment.GetEnvironmentVariable("PORT") is { Length: > 0 } port) builder.
 // Controllers: kebab-case routes (api/v1/[controller]), localized validation and RFC 7807 problems.
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddLocalization();
-builder.Services.AddControllers(options => options.Conventions.Add(new KebabCaseRouteNamingConvention()))
+builder.Services.AddControllers(options =>
+    {
+        options.Conventions.Add(new KebabCaseRouteNamingConvention());
+        // Incomplete subscriptions (card or payment not confirmed at Stripe) cannot use the platform.
+        options.Filters.Add<RequireActiveSubscriptionFilter>();
+    })
     .AddDataAnnotationsLocalization(options =>
         options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)))
     .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new QuantityJsonConverter()))

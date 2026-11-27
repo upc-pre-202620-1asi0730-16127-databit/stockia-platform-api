@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Pipeline.Filters;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.Iam.Infrastructure.Pipeline.Middleware.Attributes;
@@ -15,6 +16,7 @@ namespace DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.REST;
 
 /// <summary>Subscription type and Upgrade plan: Administrator only.</summary>
 [Authorize]
+[AllowIncompleteSubscription]
 [RequireRole("ADMIN")]
 [ApiController]
 [Route("api/v1/[controller]")]

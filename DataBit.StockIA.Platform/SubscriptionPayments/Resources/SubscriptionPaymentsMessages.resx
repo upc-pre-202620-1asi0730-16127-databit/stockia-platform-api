@@ -31,4 +31,7 @@
   <data name="InvalidWebhookSignature" xml:space="preserve">
     <value>The Stripe signature is not valid.</value>
   </data>
+  <data name="SubscriptionRequired" xml:space="preserve">
+    <value>Confirm your card with Stripe (or pay a plan) to start using StockIA.</value>
+  </data>
 </root>

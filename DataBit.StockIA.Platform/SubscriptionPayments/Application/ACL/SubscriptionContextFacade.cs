@@ -48,6 +48,15 @@ public class SubscriptionContextFacade(
             new { feature = limit.ToString(), limit = entitlements.LimitOf(limit), current = currentUsage, requiredPlan = required?.Name });
     }
 
+    public async Task<EntitlementCheck> CheckAccess(int restaurantId, CancellationToken cancellationToken)
+    {
+        var subscription = await subscriptionRepository.FindByRestaurantIdAsync(restaurantId, cancellationToken);
+        if (subscription == null || subscription.GrantsAccess) return EntitlementCheck.Allow;
+
+        return new EntitlementCheck(false, PlanAccessError.SubscriptionRequired, localizer[nameof(PlanAccessError.SubscriptionRequired)],
+            new { requiredAction = "LINK_CARD_OR_PAY", planId = subscription.PlanId, hasCardOnFile = subscription.HasCardOnFile });
+    }
+
     public async Task<EntitlementCheck> CheckFeature(int restaurantId, PlanFeature feature, CancellationToken cancellationToken)
     {
         var plan = await PlanOfAsync(restaurantId, cancellationToken);
