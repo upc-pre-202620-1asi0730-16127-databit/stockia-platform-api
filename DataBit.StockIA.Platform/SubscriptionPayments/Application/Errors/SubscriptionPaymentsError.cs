@@ -7,5 +7,6 @@ public enum SubscriptionPaymentsError
     AlreadyOnPlan,
     CardNotLinked,
     PaymentGatewayNotConfigured,
-    PaymentGatewayError
+    PaymentGatewayError,
+    InvalidWebhookSignature
 }

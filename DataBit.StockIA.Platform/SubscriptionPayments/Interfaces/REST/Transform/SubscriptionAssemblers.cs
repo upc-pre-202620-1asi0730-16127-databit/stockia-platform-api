@@ -35,15 +35,21 @@ public static class SubscriptionResourceFromEntityAssembler
 
 public static class SubscriptionActionResultAssembler
 {
+    public static IActionResult ToActionResult(Result result, ProblemDetailsFactory factory, Func<IActionResult> onSuccess) =>
+        ResultActionAssembler.ToActionResult(result, factory, StatusCodeOf, onSuccess);
+
     public static IActionResult ToActionResult<T>(Result<T> result, ProblemDetailsFactory factory, Func<T, IActionResult> onSuccess) =>
-        ResultActionAssembler.ToActionResult(result, factory, error => error switch
-        {
-            SubscriptionPaymentsError.PlanNotFound => StatusCodes.Status404NotFound,
-            SubscriptionPaymentsError.SubscriptionNotFound => StatusCodes.Status404NotFound,
-            SubscriptionPaymentsError.AlreadyOnPlan => StatusCodes.Status409Conflict,
-            SubscriptionPaymentsError.CardNotLinked => StatusCodes.Status409Conflict,
-            SubscriptionPaymentsError.PaymentGatewayNotConfigured => StatusCodes.Status503ServiceUnavailable,
-            SubscriptionPaymentsError.PaymentGatewayError => StatusCodes.Status502BadGateway,
-            _ => StatusCodes.Status500InternalServerError
-        }, onSuccess);
+        ResultActionAssembler.ToActionResult(result, factory, StatusCodeOf, onSuccess);
+
+    private static int StatusCodeOf(Enum? error) => error switch
+    {
+        SubscriptionPaymentsError.PlanNotFound => StatusCodes.Status404NotFound,
+        SubscriptionPaymentsError.SubscriptionNotFound => StatusCodes.Status404NotFound,
+        SubscriptionPaymentsError.AlreadyOnPlan => StatusCodes.Status409Conflict,
+        SubscriptionPaymentsError.CardNotLinked => StatusCodes.Status409Conflict,
+        SubscriptionPaymentsError.PaymentGatewayNotConfigured => StatusCodes.Status503ServiceUnavailable,
+        SubscriptionPaymentsError.PaymentGatewayError => StatusCodes.Status502BadGateway,
+        SubscriptionPaymentsError.InvalidWebhookSignature => StatusCodes.Status400BadRequest,
+        _ => StatusCodes.Status500InternalServerError
+    };
 }

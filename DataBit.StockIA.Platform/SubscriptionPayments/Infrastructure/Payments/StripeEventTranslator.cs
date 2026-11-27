@@ -40,10 +40,12 @@ public static class StripeEventTranslator
 
     private static PaymentEvent FromSubscription(string eventId, PaymentEventType type, Subscription subscription)
     {
+        // "incomplete" is a checkout still being paid: nothing to apply until Stripe reports the outcome.
+        if (subscription.Status == "incomplete") return new PaymentEvent(eventId, PaymentEventType.Ignored);
         var state = subscription.Status switch
         {
             "active" or "trialing" => ProviderSubscriptionState.Active,
-            "past_due" or "unpaid" => ProviderSubscriptionState.PastDue,
+            "past_due" or "unpaid" or "paused" => ProviderSubscriptionState.PastDue,
             _ => ProviderSubscriptionState.Canceled
         };
         var periodEnd = subscription.Items?.Data?.FirstOrDefault()?.CurrentPeriodEnd;

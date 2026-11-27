@@ -198,6 +198,7 @@ builder.Services.AddScoped<IProcessedPaymentEventRepository, ProcessedPaymentEve
 builder.Services.AddSingleton(StripeOptions.FromEnvironment());
 builder.Services.AddScoped<IPaymentGateway, StripePaymentGateway>();
 builder.Services.AddScoped<ISubscriptionCommandService, SubscriptionCommandService>();
+builder.Services.AddScoped<IPaymentEventCommandService, PaymentEventCommandService>();
 builder.Services.AddScoped<ISubscriptionQueryService, SubscriptionQueryService>();
 builder.Services.AddScoped<ISubscriptionContextFacade, SubscriptionContextFacade>();
 
