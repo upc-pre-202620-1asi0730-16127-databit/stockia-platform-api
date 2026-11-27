@@ -21,4 +21,7 @@ public class UserRepository(AppDbContext context) : BaseRepository<User>(context
 
     public Task<int> CountAdminsAsync(int restaurantId, CancellationToken cancellationToken = default) =>
         Context.Set<User>().CountAsync(user => user.RestaurantId == restaurantId && user.Role == UserRole.Admin, cancellationToken);
+
+    public Task<int> CountByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
+        Context.Set<User>().CountAsync(user => user.RestaurantId == restaurantId, cancellationToken);
 }

@@ -1,3 +1,5 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 using Microsoft.Extensions.Localization;
 using DataBit.StockIA.Platform.Iam.Application.Errors;
 using DataBit.StockIA.Platform.Iam.Application.Internal.OutboundServices;
@@ -24,6 +26,7 @@ public class UserCommandService(
     ITokenService tokenService,
     IHashingService hashingService,
     ExternalNotificationService externalNotificationService,
+    ISubscriptionContextFacade subscriptionContextFacade,
     IUnitOfWork unitOfWork,
     IRestaurantClock clock,
     IConfiguration configuration,
@@ -142,6 +145,11 @@ public class UserCommandService(
         var email = User.NormalizeEmail(command.Email);
         if (await userRepository.ExistsByEmailAsync(email, cancellationToken: cancellationToken))
             return Result<User>.Failure(IamError.EmailAlreadyTaken, localizer[nameof(IamError.EmailAlreadyTaken), email]);
+
+        // The plan caps the team size (1 user in Essential, 5 in Starter).
+        var teamSize = await userRepository.CountByRestaurantIdAsync(command.RestaurantId, cancellationToken);
+        var check = await subscriptionContextFacade.CheckLimit(command.RestaurantId, PlanLimit.Users, teamSize, cancellationToken);
+        if (!check.Allowed) return Result<User>.Failure(check.Error!.Value, check.Message, check.Details);
 
         var user = new User(command.FullName, email, hashingService.HashPassword(command.TemporaryPassword), command.RestaurantId, command.Role);
         await userRepository.AddAsync(user, cancellationToken);
