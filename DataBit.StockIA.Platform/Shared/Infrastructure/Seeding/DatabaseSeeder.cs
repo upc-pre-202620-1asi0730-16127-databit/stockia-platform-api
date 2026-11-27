@@ -17,13 +17,14 @@ using DataBit.StockIA.Platform.StockManagement.Domain.Model.Aggregates;
 using DataBit.StockIA.Platform.StockManagement.Domain.Model.ValueObjects;
 using DataBit.StockIA.Platform.StockManagement.Domain.Services;
 using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Aggregates;
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
 using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 
 namespace DataBit.StockIA.Platform.Shared.Infrastructure.Seeding;
 
 /// <summary>
 ///     Creates the database and loads the data the platform needs:
-///     - Always: the plan catalog (Esencial, Profesional, IoT Completo).
+///     - Always: the plan catalog (Essential, Starter, Professional).
 ///     - With Seed:DemoData = true and no users yet: the demo restaurant of the
 ///       Web Application (same accounts as the mock API), its supplies, recipes,
 ///       120 days of sales history (so the ML forecast works from day one),
@@ -75,9 +76,21 @@ public class DatabaseSeeder(
     {
         if (await context.Set<Plan>().AnyAsync(cancellationToken)) return;
         context.Set<Plan>().AddRange(
-            new Plan("Esencial", 0m, ["Hasta 50 insumos", "Registro de ventas básico", "1 usuario"], false),
-            new Plan("Profesional", 39m, ["Insumos ilimitados", "Predicción de demanda con IA", "Hasta 5 usuarios", "Recomendaciones automáticas"], true),
-            new Plan("IoT Completo", 79m, ["Todo lo de Profesional", "Sensores IoT", "Alertas en tiempo real", "Usuarios ilimitados"], false));
+            new Plan(PlanCatalog.EssentialName, 0m, PlanCatalog.EssentialFeatures, PlanEntitlements.Essential, false),
+            new Plan(PlanCatalog.StarterName, 39m, PlanCatalog.StarterFeatures, PlanEntitlements.Starter, false),
+            new Plan(PlanCatalog.ProfessionalName, 79m, PlanCatalog.ProfessionalFeatures, PlanEntitlements.Professional, true));
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    ///     The demo restaurant shows the whole product (forecasts, recommendations, 120 days of sales),
+    ///     which the free plan caps, so it starts on the most expensive plan. Real sign-ups start on Essential.
+    /// </summary>
+    private async Task UpgradeDemoToTopPlanAsync(int restaurantId, DateOnly today, CancellationToken cancellationToken)
+    {
+        var topPlan = await context.Set<Plan>().OrderByDescending(plan => plan.MonthlyPrice).FirstAsync(cancellationToken);
+        var subscription = await context.Set<RestaurantSubscription>().FirstAsync(candidate => candidate.RestaurantId == restaurantId, cancellationToken);
+        subscription.Activate(topPlan.Id, PaymentMethod.Stripe, BillingInterval.Monthly, today);
         await context.SaveChangesAsync(cancellationToken);
     }
 
@@ -99,6 +112,7 @@ public class DatabaseSeeder(
         restaurant.LinkOwner(admin.Id);
         await context.SaveChangesAsync(cancellationToken);
         await subscriptionContextFacade.CreateDefaultSubscription(restaurant.Id, cancellationToken);
+        await UpgradeDemoToTopPlanAsync(restaurant.Id, today, cancellationToken);
 
         InventoryItem Item(string name, string quantity, string min, StorageType storage, int shelfLife, decimal cost) =>
             new(restaurant.Id, name, "kg", Quantity.Parse(quantity), Quantity.Parse(min), storage, shelfLife, cost, today);

@@ -11,4 +11,7 @@ public class InventoryItemRepository(AppDbContext context) : BaseRepository<Inve
     public async Task<IReadOnlyList<InventoryItem>> FindAllByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
         await Context.Set<InventoryItem>().Where(item => item.RestaurantId == restaurantId).OrderByDescending(item => item.Id)
             .ToListAsync(cancellationToken);
+
+    public Task<int> CountByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
+        Context.Set<InventoryItem>().CountAsync(item => item.RestaurantId == restaurantId, cancellationToken);
 }

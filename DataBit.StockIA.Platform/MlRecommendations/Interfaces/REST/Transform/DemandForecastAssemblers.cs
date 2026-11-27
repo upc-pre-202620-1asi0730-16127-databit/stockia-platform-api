@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.Shared.Application.Errors;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.MlRecommendations.Application.Errors;
@@ -43,6 +44,7 @@ public static class MlRecommendationsActionResultAssembler
         MlRecommendationsError.NoDishes => StatusCodes.Status422UnprocessableEntity,
         MlRecommendationsError.InvalidHorizon => StatusCodes.Status400BadRequest,
         MlRecommendationsError.RecommendationNotFound => StatusCodes.Status404NotFound,
+        PlanAccessError.PlanLimitReached or PlanAccessError.FeatureNotInPlan => StatusCodes.Status402PaymentRequired,
         _ => StatusCodes.Status500InternalServerError
     };
 

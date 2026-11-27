@@ -13,6 +13,9 @@ public class RestaurantSubscription(int restaurantId, int planId) : IAuditableEn
     /// <summary>Days covered by one monthly payment.</summary>
     public const int BillingPeriodDays = 30;
 
+    /// <summary>Months covered by one annual payment.</summary>
+    public const int AnnualBillingPeriodMonths = 12;
+
     public RestaurantSubscription() : this(0, 0)
     {
     }
@@ -23,16 +26,18 @@ public class RestaurantSubscription(int restaurantId, int planId) : IAuditableEn
     public SubscriptionStatus Status { get; private set; } = SubscriptionStatus.Active;
     public DateOnly RenewalDate { get; private set; }
     public PaymentMethod PaymentMethod { get; private set; } = PaymentMethod.None;
+    public BillingInterval BillingInterval { get; private set; } = BillingInterval.Monthly;
     public DateTimeOffset CreatedAt { get; set; }
     public DateTimeOffset UpdatedAt { get; set; }
 
-    /// <summary>Activates a plan paid today; it renews after one billing period.</summary>
-    public RestaurantSubscription Activate(int planId, PaymentMethod paymentMethod, DateOnly today)
+    /// <summary>Activates a plan paid today; it renews after one billing period (a month or a year).</summary>
+    public RestaurantSubscription Activate(int planId, PaymentMethod paymentMethod, BillingInterval billingInterval, DateOnly today)
     {
         PlanId = planId;
         PaymentMethod = paymentMethod;
+        BillingInterval = billingInterval;
         Status = SubscriptionStatus.Active;
-        RenewalDate = today.AddDays(BillingPeriodDays);
+        RenewalDate = billingInterval == BillingInterval.Annual ? today.AddMonths(AnnualBillingPeriodMonths) : today.AddDays(BillingPeriodDays);
         return this;
     }
 }

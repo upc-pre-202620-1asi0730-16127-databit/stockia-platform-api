@@ -7,4 +7,7 @@ public interface IDemandForecastRepository : IBaseRepository<DemandForecast>
 {
     Task<IReadOnlyList<DemandForecast>> FindRecentByRestaurantIdAsync(int restaurantId, int limit, CancellationToken cancellationToken = default);
     Task<DemandForecast?> FindLatestByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default);
+
+    /// <summary>Forecasts generated since the instant, for the monthly quota of the plan.</summary>
+    Task<int> CountSinceAsync(int restaurantId, DateTimeOffset since, CancellationToken cancellationToken = default);
 }

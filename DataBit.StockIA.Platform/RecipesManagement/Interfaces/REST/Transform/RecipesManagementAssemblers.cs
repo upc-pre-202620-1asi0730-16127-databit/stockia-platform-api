@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.Shared.Application.Errors;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.RecipesManagement.Application.Errors;
 using DataBit.StockIA.Platform.RecipesManagement.Domain.Model.Aggregates;
@@ -54,6 +55,7 @@ public static class RecipesManagementActionResultAssembler
         RecipesManagementError.InvalidData => StatusCodes.Status400BadRequest,
         RecipesManagementError.CannotSell => StatusCodes.Status422UnprocessableEntity,
         RecipesManagementError.AlreadyVoided => StatusCodes.Status409Conflict,
+        PlanAccessError.PlanLimitReached or PlanAccessError.FeatureNotInPlan => StatusCodes.Status402PaymentRequired,
         _ => StatusCodes.Status500InternalServerError
     };
 

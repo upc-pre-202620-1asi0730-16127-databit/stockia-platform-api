@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.Shared.Application.Errors;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.Iam.Application.Errors;
 using DataBit.StockIA.Platform.Shared.Application.Patterns;
@@ -26,6 +27,7 @@ public static class IamActionResultAssembler
         IamError.LastAdministrator => StatusCodes.Status409Conflict,
         IamError.CannotRemoveYourself => StatusCodes.Status409Conflict,
         IamError.UserNotFound => StatusCodes.Status404NotFound,
+        PlanAccessError.PlanLimitReached or PlanAccessError.FeatureNotInPlan => StatusCodes.Status402PaymentRequired,
         _ => StatusCodes.Status500InternalServerError
     };
 }

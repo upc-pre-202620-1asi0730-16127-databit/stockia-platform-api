@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.RecipesManagement.Domain.Model.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using DataBit.StockIA.Platform.RecipesManagement.Domain.Model.Aggregates;
 using DataBit.StockIA.Platform.RecipesManagement.Domain.Repositories;
@@ -29,4 +30,8 @@ public class SaleRepository(AppDbContext context) : BaseRepository<Sale>(context
         }
         return await query.OrderByDescending(sale => sale.SaleDate).ThenByDescending(sale => sale.Id).ToListAsync(cancellationToken);
     }
+
+    public Task<int> CountConfirmedSinceAsync(int restaurantId, DateTimeOffset since, CancellationToken cancellationToken = default) =>
+        Context.Set<Sale>().CountAsync(sale => sale.RestaurantId == restaurantId && sale.Status == SaleStatus.Confirmed && sale.SaleDate >= since,
+            cancellationToken);
 }

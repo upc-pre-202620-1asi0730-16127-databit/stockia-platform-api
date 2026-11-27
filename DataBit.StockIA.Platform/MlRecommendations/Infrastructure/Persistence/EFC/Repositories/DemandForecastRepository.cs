@@ -19,4 +19,7 @@ public class DemandForecastRepository(AppDbContext context) : BaseRepository<Dem
     public Task<DemandForecast?> FindLatestByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
         Context.Set<DemandForecast>().Where(forecast => forecast.RestaurantId == restaurantId)
             .OrderByDescending(forecast => forecast.Id).FirstOrDefaultAsync(cancellationToken);
+
+    public Task<int> CountSinceAsync(int restaurantId, DateTimeOffset since, CancellationToken cancellationToken = default) =>
+        Context.Set<DemandForecast>().CountAsync(forecast => forecast.RestaurantId == restaurantId && forecast.GeneratedAt >= since, cancellationToken);
 }

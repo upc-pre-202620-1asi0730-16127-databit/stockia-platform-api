@@ -13,14 +13,24 @@ namespace DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.REST.Transfor
 public static class PlanResourceFromEntityAssembler
 {
     public static PlanResource ToResourceFromEntity(Plan plan) =>
-        new(plan.Id, plan.Name, plan.MonthlyPrice, plan.Features, plan.Highlighted);
+        new(plan.Id, plan.Name, plan.MonthlyPrice, plan.AnnualPrice, plan.Features, ToResource(plan.Entitlements), plan.Highlighted);
+
+    public static PlanEntitlementsResource ToResource(PlanEntitlements entitlements) => new(
+        entitlements.MaxUsers, entitlements.MaxInventoryItems, entitlements.MaxRecipes, entitlements.MaxSalesPerMonth,
+        entitlements.MaxForecastsPerMonth, entitlements.PurchaseRecommendations, entitlements.MenuRecommendations,
+        entitlements.SustainabilityReports, ChannelCodesOf(entitlements.AlertChannels), entitlements.RealtimeCriticalAlerts,
+        entitlements.Automation, entitlements.ExternalIntegrations, entitlements.PrioritySupport);
+
+    public static IReadOnlyList<string> ChannelCodesOf(AlertChannels channels) =>
+        Enum.GetValues<AlertChannels>().Where(channel => channel != AlertChannels.None && channels.HasFlag(channel))
+            .Select(channel => channel.ToCode()).ToList();
 }
 
 public static class SubscriptionResourceFromEntityAssembler
 {
     public static SubscriptionResource ToResourceFromEntity(RestaurantSubscription subscription) => new(
         subscription.Id, subscription.PlanId, subscription.Status.ToCode(), subscription.RenewalDate.ToString("yyyy-MM-dd"),
-        subscription.PaymentMethod.ToCode());
+        subscription.PaymentMethod.ToCode(), subscription.BillingInterval.ToCode());
 }
 
 public static class SubscriptionActionResultAssembler

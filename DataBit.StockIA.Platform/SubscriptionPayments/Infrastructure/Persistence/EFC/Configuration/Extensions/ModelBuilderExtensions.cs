@@ -16,7 +16,25 @@ public static class ModelBuilderExtensions
             entity.Property(plan => plan.Name).IsRequired().HasMaxLength(60);
             entity.Property(plan => plan.MonthlyPrice).HasPrecision(10, 2);
             entity.Property(plan => plan.Features).HasStringListConversion();
+            // Complex type: the entitlements are columns of plans (entitlements_max_users, ...), without a key of their own.
+            entity.ComplexProperty(plan => plan.Entitlements, complex =>
+            {
+                complex.Property(entitlements => entitlements.MaxUsers).HasColumnName("entitlements_max_users");
+                complex.Property(entitlements => entitlements.MaxInventoryItems).HasColumnName("entitlements_max_inventory_items");
+                complex.Property(entitlements => entitlements.MaxRecipes).HasColumnName("entitlements_max_recipes");
+                complex.Property(entitlements => entitlements.MaxSalesPerMonth).HasColumnName("entitlements_max_sales_per_month");
+                complex.Property(entitlements => entitlements.MaxForecastsPerMonth).HasColumnName("entitlements_max_forecasts_per_month");
+                complex.Property(entitlements => entitlements.PurchaseRecommendations).HasColumnName("entitlements_purchase_recommendations");
+                complex.Property(entitlements => entitlements.MenuRecommendations).HasColumnName("entitlements_menu_recommendations");
+                complex.Property(entitlements => entitlements.SustainabilityReports).HasColumnName("entitlements_sustainability_reports");
+                complex.Property(entitlements => entitlements.AlertChannels).HasConversion<int>().HasColumnName("entitlements_alert_channels");
+                complex.Property(entitlements => entitlements.RealtimeCriticalAlerts).HasColumnName("entitlements_realtime_critical_alerts");
+                complex.Property(entitlements => entitlements.Automation).HasColumnName("entitlements_automation");
+                complex.Property(entitlements => entitlements.ExternalIntegrations).HasColumnName("entitlements_external_integrations");
+                complex.Property(entitlements => entitlements.PrioritySupport).HasColumnName("entitlements_priority_support");
+            });
             entity.Ignore(plan => plan.IsFree);
+            entity.Ignore(plan => plan.AnnualPrice);
         });
 
         builder.Entity<RestaurantSubscription>(entity =>
@@ -27,6 +45,7 @@ public static class ModelBuilderExtensions
             entity.HasIndex(subscription => subscription.RestaurantId).IsUnique();
             entity.Property(subscription => subscription.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(subscription => subscription.PaymentMethod).HasConversion<string>().HasMaxLength(20);
+            entity.Property(subscription => subscription.BillingInterval).HasConversion<string>().HasMaxLength(20);
             entity.Property(subscription => subscription.RenewalDate).HasDateOnlyConversion();
             entity.HasOne<Plan>().WithMany().HasForeignKey(subscription => subscription.PlanId).OnDelete(DeleteBehavior.Restrict);
         });

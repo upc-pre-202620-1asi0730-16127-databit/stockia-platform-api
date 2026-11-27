@@ -9,4 +9,6 @@ public interface IUserRepository : IBaseRepository<User>
     Task<bool> ExistsByEmailAsync(string email, int? exceptUserId = null, CancellationToken cancellationToken = default);
     Task<IEnumerable<User>> FindAllByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default);
     Task<int> CountAdminsAsync(int restaurantId, CancellationToken cancellationToken = default);
+
+    Task<int> CountByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default);
 }
