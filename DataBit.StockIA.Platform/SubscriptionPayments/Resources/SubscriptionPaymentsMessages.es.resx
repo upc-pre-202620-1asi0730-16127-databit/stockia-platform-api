@@ -16,4 +16,10 @@
   <data name="PaymentRejected" xml:space="preserve">
     <value>El pago fue rechazado.</value>
   </data>
+  <data name="PlanLimitReached" xml:space="preserve">
+    <value>Tu plan {0} permite hasta {1} ({2}). Mejora tu plan para agregar más.</value>
+  </data>
+  <data name="FeatureNotInPlan" xml:space="preserve">
+    <value>Tu plan {0} no incluye esta función ({1}). Mejora tu plan para usarla.</value>
+  </data>
 </root>

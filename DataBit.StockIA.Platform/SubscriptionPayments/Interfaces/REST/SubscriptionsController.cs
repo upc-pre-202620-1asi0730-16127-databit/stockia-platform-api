@@ -36,7 +36,7 @@ public class SubscriptionsController(
         return subscription == null ? NotFound() : Ok(SubscriptionResourceFromEntityAssembler.ToResourceFromEntity(subscription));
     }
 
-    /// <summary>Chooses or changes the plan (simulated Stripe / PayPal checkout).</summary>
+    /// <summary>Chooses or changes the plan (simulated Stripe checkout).</summary>
     [HttpPost]
     [EndpointSummary("Choose a plan")]
     [EndpointName("ChangePlan")]
@@ -44,10 +44,15 @@ public class SubscriptionsController(
     {
         if (!EnumCode.TryParse<PaymentMethod>(resource.PaymentMethod, out var paymentMethod))
             return BadRequest(problemDetailsFactory.CreateProblemDetails(StatusCodes.Status400BadRequest, "InvalidPaymentMethod",
-                "The payment method must be STRIPE or PAYPAL."));
+                "The payment method must be STRIPE."));
+
+        var billingInterval = BillingInterval.Monthly;
+        if (resource.BillingInterval != null && !EnumCode.TryParse(resource.BillingInterval, out billingInterval))
+            return BadRequest(problemDetailsFactory.CreateProblemDetails(StatusCodes.Status400BadRequest, "InvalidBillingInterval",
+                "The billing interval must be MONTHLY or ANNUAL."));
 
         var result = await subscriptionCommandService.Handle(
-            new ChangePlanCommand(currentUser.CurrentRestaurantId!.Value, resource.PlanId, paymentMethod), cancellationToken);
+            new ChangePlanCommand(currentUser.CurrentRestaurantId!.Value, resource.PlanId, paymentMethod, billingInterval), cancellationToken);
         return SubscriptionActionResultAssembler.ToActionResult(result, problemDetailsFactory,
             subscription => Ok(SubscriptionResourceFromEntityAssembler.ToResourceFromEntity(subscription)));
     }

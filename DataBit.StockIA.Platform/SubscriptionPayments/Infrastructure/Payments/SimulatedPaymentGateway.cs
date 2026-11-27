@@ -7,10 +7,11 @@ namespace DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Payments;
 /// <summary>Simulated checkout: always approves and logs the charge. No real money moves.</summary>
 public class SimulatedPaymentGateway(ILogger<SimulatedPaymentGateway> logger) : IPaymentGateway
 {
-    public Task<bool> ChargeAsync(int restaurantId, Plan plan, PaymentMethod paymentMethod, CancellationToken cancellationToken)
+    public Task<bool> ChargeAsync(int restaurantId, Plan plan, PaymentMethod paymentMethod, BillingInterval billingInterval,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("Simulated {Provider} charge of S/ {Amount} for plan {Plan} (restaurant {RestaurantId})",
-            paymentMethod, plan.MonthlyPrice, plan.Name, restaurantId);
+        logger.LogInformation("Simulated {Provider} {Interval} charge of S/ {Amount} for plan {Plan} (restaurant {RestaurantId})",
+            paymentMethod, billingInterval, plan.PriceFor(billingInterval), plan.Name, restaurantId);
         return Task.FromResult(true);
     }
 }
