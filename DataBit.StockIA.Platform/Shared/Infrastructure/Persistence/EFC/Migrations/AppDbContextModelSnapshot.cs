@@ -541,6 +541,69 @@ namespace DataBit.StockIA.Platform.Shared.Infrastructure.Persistence.EFC.Migrati
                     b.ToTable("stock_consumptions");
                 });
 
+            modelBuilder.Entity("DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Aggregates.PaymentTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("varchar(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("InvoiceId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<int?>("PlanId")
+                        .HasColumnType("int")
+                        .HasColumnName("plan_id");
+
+                    b.Property<int>("RestaurantId")
+                        .HasColumnType("int")
+                        .HasColumnName("restaurant_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment_transactions");
+
+                    b.HasIndex("InvoiceId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_payment_transactions_invoice_id");
+
+                    b.HasIndex("RestaurantId")
+                        .HasDatabaseName("ix_payment_transactions_restaurant_id");
+
+                    b.ToTable("payment_transactions");
+                });
+
             modelBuilder.Entity("DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Aggregates.Plan", b =>
                 {
                     b.Property<int>("Id")
@@ -644,9 +707,17 @@ namespace DataBit.StockIA.Platform.Shared.Infrastructure.Persistence.EFC.Migrati
                         .HasColumnType("varchar(20)")
                         .HasColumnName("billing_interval");
 
+                    b.Property<bool>("CancelAtPeriodEnd")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("cancel_at_period_end");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetime")
                         .HasColumnName("created_at");
+
+                    b.Property<bool>("HasCardOnFile")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("has_card_on_file");
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
@@ -672,6 +743,16 @@ namespace DataBit.StockIA.Platform.Shared.Infrastructure.Persistence.EFC.Migrati
                         .HasColumnType("varchar(20)")
                         .HasColumnName("status");
 
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("stripe_customer_id");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("stripe_subscription_id");
+
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetime")
                         .HasColumnName("updated_at");
@@ -686,7 +767,36 @@ namespace DataBit.StockIA.Platform.Shared.Infrastructure.Persistence.EFC.Migrati
                         .IsUnique()
                         .HasDatabaseName("ix_subscriptions_restaurant_id");
 
+                    b.HasIndex("StripeCustomerId")
+                        .HasDatabaseName("ix_subscriptions_stripe_customer_id");
+
+                    b.HasIndex("StripeSubscriptionId")
+                        .HasDatabaseName("ix_subscriptions_stripe_subscription_id");
+
                     b.ToTable("subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.Entities.ProcessedPaymentEvent", b =>
+                {
+                    b.Property<string>("EventId")
+                        .HasMaxLength(64)
+                        .HasColumnType("varchar(64)")
+                        .HasColumnName("event_id");
+
+                    b.Property<DateTimeOffset>("ProcessedAt")
+                        .HasColumnType("datetime")
+                        .HasColumnName("processed_at");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)")
+                        .HasColumnName("type");
+
+                    b.HasKey("EventId")
+                        .HasName("pk_processed_payment_events");
+
+                    b.ToTable("processed_payment_events");
                 });
 
             modelBuilder.Entity("DataBit.StockIA.Platform.MlRecommendations.Domain.Model.Aggregates.DemandForecast", b =>
