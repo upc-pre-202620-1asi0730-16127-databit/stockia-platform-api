@@ -1,3 +1,5 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 using Microsoft.Extensions.Localization;
 using DataBit.StockIA.Platform.RecipesManagement.Application.Errors;
 using DataBit.StockIA.Platform.RecipesManagement.Application.Internal.OutboundServices;
@@ -16,11 +18,17 @@ namespace DataBit.StockIA.Platform.RecipesManagement.Application.Internal.Comman
 public class RecipeCommandService(
     IRecipeRepository recipeRepository,
     ExternalStockService externalStockService,
+    ISubscriptionContextFacade subscriptionContextFacade,
     IUnitOfWork unitOfWork,
     IStringLocalizer<RecipesManagementMessages> localizer) : IRecipeCommandService
 {
+    /// <summary>The plan caps how many dishes a restaurant can register (10 in Essential, 50 in Starter).</summary>
     public async Task<Result<Recipe>> Handle(CreateRecipeCommand command, CancellationToken cancellationToken)
     {
+        var registered = await recipeRepository.CountByRestaurantIdAsync(command.RestaurantId, cancellationToken);
+        var check = await subscriptionContextFacade.CheckLimit(command.RestaurantId, PlanLimit.Recipes, registered, cancellationToken);
+        if (!check.Allowed) return Result<Recipe>.Failure(check.Error!.Value, check.Message, check.Details);
+
         var lines = await BuildIngredients(command.RestaurantId, command.Ingredients, cancellationToken);
         if (lines.IsFailure) return Result<Recipe>.Failure(lines.Error!, lines.Message);
         try

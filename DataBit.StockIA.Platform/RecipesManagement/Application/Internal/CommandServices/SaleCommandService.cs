@@ -1,3 +1,5 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Domain.Model.ValueObjects;
+using DataBit.StockIA.Platform.SubscriptionPayments.Interfaces.ACL;
 using Microsoft.Extensions.Localization;
 using DataBit.StockIA.Platform.RecipesManagement.Application.Errors;
 using DataBit.StockIA.Platform.RecipesManagement.Application.Internal.OutboundServices;
@@ -25,6 +27,7 @@ public class SaleCommandService(
     ISaleRepository saleRepository,
     IRecipeRepository recipeRepository,
     ExternalStockService externalStockService,
+    ISubscriptionContextFacade subscriptionContextFacade,
     IUnitOfWork unitOfWork,
     IRestaurantClock clock,
     IStringLocalizer<RecipesManagementMessages> localizer) : ISaleCommandService
@@ -34,6 +37,11 @@ public class SaleCommandService(
         var recipe = await recipeRepository.FindByIdAsync(command.RecipeId, cancellationToken);
         if (recipe == null || recipe.RestaurantId != command.RestaurantId)
             return Result<Sale>.Failure(RecipesManagementError.RecipeNotFound, localizer["RecipeToSellNotFound"]);
+
+        // The plan caps the sales of the month (100 in Essential).
+        var soldThisMonth = await saleRepository.CountConfirmedSinceAsync(command.RestaurantId, clock.StartOfMonth(), cancellationToken);
+        var check = await subscriptionContextFacade.CheckLimit(command.RestaurantId, PlanLimit.SalesPerMonth, soldThisMonth, cancellationToken);
+        if (!check.Allowed) return Result<Sale>.Failure(check.Error!.Value, check.Message, check.Details);
 
         var availability = await externalStockService.CheckAvailability(recipe, command.Quantity, cancellationToken);
         if (!availability.CanFulfill) return CannotSell(recipe.DishName, availability.Shortages);

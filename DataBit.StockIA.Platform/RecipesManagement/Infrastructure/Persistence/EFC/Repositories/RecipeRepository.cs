@@ -14,4 +14,7 @@ public class RecipeRepository(AppDbContext context) : BaseRepository<Recipe>(con
     public async Task<IReadOnlyList<Recipe>> FindAllByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
         await Context.Set<Recipe>().Where(recipe => recipe.RestaurantId == restaurantId).OrderByDescending(recipe => recipe.Id)
             .ToListAsync(cancellationToken);
+
+    public Task<int> CountByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default) =>
+        Context.Set<Recipe>().CountAsync(recipe => recipe.RestaurantId == restaurantId, cancellationToken);
 }

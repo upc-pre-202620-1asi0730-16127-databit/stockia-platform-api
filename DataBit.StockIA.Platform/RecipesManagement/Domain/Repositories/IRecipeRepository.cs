@@ -6,4 +6,6 @@ namespace DataBit.StockIA.Platform.RecipesManagement.Domain.Repositories;
 public interface IRecipeRepository : IBaseRepository<Recipe>
 {
     Task<IReadOnlyList<Recipe>> FindAllByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default);
+
+    Task<int> CountByRestaurantIdAsync(int restaurantId, CancellationToken cancellationToken = default);
 }
