@@ -10,16 +10,28 @@
   <data name="SubscriptionNotFound" xml:space="preserve">
     <value>El restaurante no tiene suscripción.</value>
   </data>
-  <data name="InvalidPaymentMethod" xml:space="preserve">
-    <value>Elige Stripe o PayPal para pagar este plan.</value>
-  </data>
-  <data name="PaymentRejected" xml:space="preserve">
-    <value>El pago fue rechazado.</value>
-  </data>
   <data name="PlanLimitReached" xml:space="preserve">
     <value>Tu plan {0} permite hasta {1} ({2}). Mejora tu plan para agregar más.</value>
   </data>
   <data name="FeatureNotInPlan" xml:space="preserve">
     <value>Tu plan {0} no incluye esta función ({1}). Mejora tu plan para usarla.</value>
+  </data>
+  <data name="AlreadyOnPlan" xml:space="preserve">
+    <value>Ya estás en este plan.</value>
+  </data>
+  <data name="CardNotLinked" xml:space="preserve">
+    <value>Primero guarda una tarjeta con Stripe.</value>
+  </data>
+  <data name="PaymentGatewayNotConfigured" xml:space="preserve">
+    <value>Los pagos no están disponibles por ahora.</value>
+  </data>
+  <data name="PaymentGatewayError" xml:space="preserve">
+    <value>El proveedor de pagos no pudo completar la solicitud. Inténtalo de nuevo.</value>
+  </data>
+  <data name="InvalidWebhookSignature" xml:space="preserve">
+    <value>La firma de Stripe no es válida.</value>
+  </data>
+  <data name="SubscriptionRequired" xml:space="preserve">
+    <value>Confirma tu tarjeta con Stripe (o paga un plan) para empezar a usar StockIA.</value>
   </data>
 </root>

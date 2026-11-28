@@ -1,3 +1,4 @@
+using DataBit.StockIA.Platform.SubscriptionPayments.Infrastructure.Pipeline.Filters;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using DataBit.StockIA.Platform.Iam.Application.Internal.OutboundServices;
@@ -20,6 +21,7 @@ namespace DataBit.StockIA.Platform.Iam.Interfaces.REST;
 ///     every user edits only their own profile and password.
 /// </summary>
 [Authorize]
+[AllowIncompleteSubscription]
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]

@@ -17,6 +17,12 @@ public interface ISubscriptionContextFacade
     /// <summary>May the restaurant add one more unit of the limit, given its current usage?</summary>
     Task<EntitlementCheck> CheckLimit(int restaurantId, PlanLimit limit, int currentUsage, CancellationToken cancellationToken);
 
+    /// <summary>
+    ///     May the restaurant use the platform at all? Denied (SubscriptionRequired) while its subscription is Incomplete, that
+    ///     is, until Stripe confirms the card (free plan) or the payment (paid plan).
+    /// </summary>
+    Task<EntitlementCheck> CheckAccess(int restaurantId, CancellationToken cancellationToken);
+
     /// <summary>Does the plan of the restaurant include the feature?</summary>
     Task<EntitlementCheck> CheckFeature(int restaurantId, PlanFeature feature, CancellationToken cancellationToken);
 }
